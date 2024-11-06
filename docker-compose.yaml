@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy  # 컨테이너가 준비되었는지 확인
+    networks:
+      - app-network
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    networks:
+      - app-network
+
+
+
+volumes:
+  db_mysql:
+
+
+networks:
+  app-network:
+    driver: bridge
