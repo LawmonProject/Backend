@@ -28,12 +28,19 @@ public class Expert {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
+  private String profileImage;
+
+  @Column(nullable = false)
   private String email;
 
+  @Column(nullable = false)
   private String name;
 
+  @Column(nullable = false)
   private Specialty specialty;
 
+  @Column(nullable = false)
   private Long rating;
 
   @OneToMany(mappedBy = "expert", cascade = CascadeType.ALL , orphanRemoval = true)
