@@ -9,3 +9,5 @@ COPY ${JAR_FILE} app.jar
 
 # 4. 컨테이너 시작 시 JAR 파일을 실행하는 명령어
 ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+VOLUME /VOLUME_NAME

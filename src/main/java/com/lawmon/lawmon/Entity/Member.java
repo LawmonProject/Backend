@@ -13,7 +13,7 @@ import java.util.List;
 /**
  *
  * @author : frozzun
- * @filename :Expert.java
+ * @filename :Member.java
  * @since 11/10/24
  */
 @Entity
@@ -22,7 +22,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Expert {
+public class Member {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,7 @@ public class Expert {
   @Column(nullable = false)
   private Long rating;
 
-  @OneToMany(mappedBy = "expert", cascade = CascadeType.ALL , orphanRemoval = true)
-  private List<ChatExpertSession> chatExpertSessionList;
+  public enum Specialty {
+    USER, EXPERT
+  }
 }

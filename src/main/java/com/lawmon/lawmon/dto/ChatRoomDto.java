@@ -1,20 +1,20 @@
 package com.lawmon.lawmon.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
-@Setter
-public class ChatRoomDto {
+@Builder
+public class ChatRoomDto implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 6494678977089006639L;
+
   private String roomId;
   private String name;
-
-  public static ChatRoomDto create(String name) {
-    ChatRoomDto chatRoomDto = new ChatRoomDto();
-    chatRoomDto.roomId = UUID.randomUUID().toString();
-    chatRoomDto.name = name;
-    return chatRoomDto;
-  }
 }
