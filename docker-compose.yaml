@@ -13,9 +13,11 @@ services:
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATA_MONGODB_URI: ${MONGO_URI}
+      SPRING_DATA_MONGODB_USERNAME: ${MONGO_USERNAME}
+      SPRING_DATA_MONGODB_PASSWORD: ${MONGO_PASSWORD}
     depends_on:
-      mysql:
-        condition: service_healthy  # 컨테이너가 준비되었는지 확인
+      - mysql
     networks:
       - app-network
 
@@ -54,22 +56,22 @@ services:
     networks:
       - app-network
 
-  mongo:
-    container_name: mongo
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - db_mongo:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-    restart: always
+#  mongo:
+#    container_name: mongo
+#    image: mongo:latest
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - db_mongo:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: lawmon
+#      MONGO_INITDB_ROOT_PASSWORD: qwer
+#    restart: always
 
 volumes:
   db_mysql:
   db_redis:
-  db_mongo:
+#  db_mongo:
 
 
 networks:
