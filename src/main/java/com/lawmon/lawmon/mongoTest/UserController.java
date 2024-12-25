@@ -1,5 +1,6 @@
 package com.lawmon.lawmon.mongoTest;
 
+import com.lawmon.lawmon.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
