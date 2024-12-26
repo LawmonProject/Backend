@@ -11,6 +11,9 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
+/**
+ * ChatRoomMember는 특정 멤버가 어떤 채팅방에 속해 있는지를 표현
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

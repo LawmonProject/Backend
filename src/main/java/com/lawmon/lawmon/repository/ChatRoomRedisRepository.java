@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+/**
+ * Redis
+ */
 @RequiredArgsConstructor
 @Repository
 public class ChatRoomRedisRepository {

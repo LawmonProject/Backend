@@ -13,6 +13,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * ChatRoom은 채팅방을 기준으로 하며,
+ * 채팅방에 포함된 멤버들을 참조
+ */
 @Getter
 @Builder
 @NoArgsConstructor
