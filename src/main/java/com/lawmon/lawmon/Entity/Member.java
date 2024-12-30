@@ -1,6 +1,5 @@
 package com.lawmon.lawmon.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,14 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.List;
-
-/**
- *
- * @author : frozzun
- * @filename :Member.java
- * @since 11/10/24
- */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Getter
@@ -28,20 +19,21 @@ public class Member {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
-  private String profileImage;
+  @Column(nullable = false, unique = true)
+  private String email; // 이메일
 
   @Column(nullable = false)
-  private String email;
+  private String password; // 비밀번호
 
   @Column(nullable = false)
-  private String name;
+  private String name; // 이름
 
-  @Column(nullable = false)
-  private Specialty specialty;
+  @Column(nullable = true)
+  private String profileImage; // 프로필 이미지 URL
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Long rating;
+  private Specialty specialty; // 사용자 유형 (USER 또는 EXPERT)
 
   public enum Specialty {
     USER, EXPERT
