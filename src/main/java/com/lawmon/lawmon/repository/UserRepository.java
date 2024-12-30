@@ -1,9 +1,10 @@
 package com.lawmon.lawmon.repository;
 
-import com.lawmon.lawmon.mongoTest.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.lawmon.lawmon.Entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends MongoRepository<User, String> {
-  User findByName(String name);
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<Member, Long> {
+  Optional<Member> findByEmail(String email);
 }
-
