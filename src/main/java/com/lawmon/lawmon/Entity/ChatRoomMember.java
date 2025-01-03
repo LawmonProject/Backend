@@ -1,31 +1,29 @@
-package com.lawmon.lawmon.Entity;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-
-import java.time.LocalDateTime;
-
-/**
- * ChatRoomMember는 특정 멤버가 어떤 채팅방에 속해 있는지를 표현
- */
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class ChatRoomMember {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  @ManyToOne
-  private ChatRoom chatRoom;
-  @ManyToOne
-  private Member member;
-
-  private LocalDateTime enterTime;
-}
+//package com.lawmon.lawmon.Entity;
+//
+//import jakarta.persistence.*;
+//import lombok.AllArgsConstructor;
+//import lombok.Builder;
+//import lombok.Getter;
+//import lombok.NoArgsConstructor;
+//
+//import java.time.LocalDateTime;
+//
+///**
+// * ChatRoomMember는 특정 멤버가 어떤 채팅방에 속해 있는지를 표현
+// */
+//@Getter
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Builder
+//@Entity
+//public class ChatRoomMember {
+//  @Id
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  private Long id;
+//  private String roomId;
+//  @ManyToOne
+//  @JoinColumn(name = "member_id")
+//  private Member member;
+//
+//  private LocalDateTime enterTime;
+//}
