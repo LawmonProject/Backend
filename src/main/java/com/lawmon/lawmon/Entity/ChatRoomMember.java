@@ -23,7 +23,7 @@
 //  private String roomId;
 //  @ManyToOne
 //  @JoinColumn(name = "member_id")
-//  private Member member;
+//  private Member;
 //
 //  private LocalDateTime enterTime;
 //}

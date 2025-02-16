@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Document(collation = "chatroom")
+@Document("chatroom")
 public class ChatRoom implements Serializable {
 
   @Serial

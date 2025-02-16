@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Builder
-@Document(collation = "chat")
+@Document("chat")
 public class ChatMessage {
     // 메시지 타입 : 입장, 채팅
     private ChatMessageDto.MessageType type; // 메시지 타입

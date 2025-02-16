@@ -53,4 +53,26 @@ public class ChatRoomService {
   public ChannelTopic getTopic(String roomId) {
     return topics.get(roomId);
   }
+
+  /**
+   * 사용자가 전문가와 채팅하기 버튼을 누르면 전문가와 사용자의 이름으로 만들어진 채팅방 생성(1:1 채팅)
+   * @param expertId 전문가 @ID
+   * @param memberId 멤버 @ID
+   * @return ChatRoom
+   */
+  public ChatRoom startChatRoomWithExpert(long expertId, long memberId) {
+    ChatRoom chatRoom = ChatRoom.create(expertId + "_" + memberId);
+    chatRoomMongoRepo.save(chatRoom);
+    chatRoomRedisRepo.saveChatRoom(chatRoom);
+    return chatRoom;
+  }
+
+  /**
+   * 전문가가 자신이 속한 채팅방 목록 을 볼 수 있게
+   * @param expertId 전문가 @ID
+   * @return List<ChatRoom>
+   */
+  public List<ChatRoom> getExpertRooms(long expertId) {
+    return chatRoomMongoRepo.findByNameStartingWith(expertId + "_");
+  }
 }
