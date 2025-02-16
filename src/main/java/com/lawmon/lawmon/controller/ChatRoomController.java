@@ -4,6 +4,7 @@ import com.lawmon.lawmon.dto.ChatRoomDto;
 import com.lawmon.lawmon.Entity.ChatRoom;
 import com.lawmon.lawmon.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,14 +53,53 @@ public class ChatRoomController {
     model.addAttribute("roomId", roomId);
     return "/chat/roomdetail";
   }
-  // 특정 채팅방 조회 -> 오류 뜸.
+
+  /**
+   * 채팅방 정보 조회
+   * @param roomId RoomId
+   * @return RoomId, Name
+   */
   @GetMapping("/room/{roomId}")
   @ResponseBody
-  public ChatRoomDto roomInfo(@PathVariable String roomId) {
+  public ResponseEntity<ChatRoomDto> roomInfo(@PathVariable String roomId) {
     ChatRoom chatRoom =  chatRoomService.getRoomById(roomId);
-    return ChatRoomDto.builder()
+    return ResponseEntity.ok(ChatRoomDto.builder()
       .name(chatRoom.getName())
       .roomId(chatRoom.getRoomId())
-      .build();
+      .build());
+  }
+
+  /**
+   * 사용자가 전문가와 채팅하기 버튼을 누르면 전문가와 사용자의 @ID로 만들어진 채팅방 생성(1:1 채팅)
+   * 채팅방 이름 : ${ExpertId_MemberId}
+   * @param expertId 전문가 @ID
+   * @param memberId 멤버 @ID
+   * @return RoomId, Name
+   */
+  @PostMapping("/room/expert")
+  @ResponseBody
+  public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestParam long expertId, @RequestParam long memberId) {
+    ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(expertId, memberId);
+    return ResponseEntity.ok(ChatRoomDto.builder()
+      .name(chatRoom.getName())
+      .roomId(chatRoom.getRoomId())
+      .build());
+  }
+
+  /**
+   * 전문가가 자신이 속한 채팅방 목록 을 볼 수 있게
+   * @param expertId 전문가 @ID
+   * @return list of [RoomId, Name]
+   */
+  @GetMapping("/rooms/{expertId}")
+  @ResponseBody
+  public ResponseEntity<List<ChatRoomDto>> room(@PathVariable long expertId) {
+    List<ChatRoom> chatRooms =  chatRoomService.getExpertRooms(expertId);
+    return ResponseEntity.ok(chatRooms.stream()
+      .map(chatRoom -> ChatRoomDto.builder()
+        .name(chatRoom.getName())
+        .roomId(chatRoom.getRoomId())
+        .build())
+      .collect(Collectors.toList()));
   }
 }

@@ -9,4 +9,5 @@ public interface ChatRoomMongoRepo extends MongoRepository<ChatRoom, String> {
 
   List<ChatRoom> findAll();
   ChatRoom findByRoomId(String id);
+  List<ChatRoom> findByNameStartingWith(String prefix);
 }
