@@ -1,67 +1,78 @@
 package com.lawmon.lawmon.service;
 
 import com.lawmon.lawmon.Entity.ChatRoom;
-import com.lawmon.lawmon.dto.ChatRoomDto;
 import com.lawmon.lawmon.pubsub.RedisSubscriber;
-import com.lawmon.lawmon.repository.ChatRoomRedisRepository;
-import com.lawmon.lawmon.repository.ChatRoomRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.lawmon.lawmon.repository.ChatRoomMongoRepo;
+import com.lawmon.lawmon.repository.ChatRoomRedisRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ChatRoomService {
-  private final ChatRoomRedisRepository chatRoomRedisRepository; //Redis 연동
-  private final ChatRoomRepository chatRoomRepository;  //MongoDB 연동
 
-  @Autowired
-  public ChatRoomService(ChatRoomRedisRepository chatRoomRedisRepository, ChatRoomRepository chatRoomRepository) {
-    this.chatRoomRedisRepository = chatRoomRedisRepository;
-    this.chatRoomRepository = chatRoomRepository;
+  private final ChatRoomRedisRepo chatRoomRedisRepo;
+  private final ChatRoomMongoRepo chatRoomMongoRepo;
+
+  private final RedisMessageListenerContainer redisMessageListener;
+  private final RedisSubscriber redisSubscriber;
+  private Map<String, ChannelTopic> topics = new HashMap<>();
+
+  public List<ChatRoom> getAllRooms() {
+    // return chatRoomMongoRepo.findAll();
+    return chatRoomRedisRepo.findAllRoom();
   }
-  // 채팅방 생성 서비스
+
+  public ChatRoom getRoomById(String id) {
+    return chatRoomMongoRepo.findByRoomId(id);
+//    return chatRoomRedisRepo.findRoomById(id);
+  }
+
   public ChatRoom createChatRoom(String name) {
-    // 1. MongoDB에 채팅방 저장
-    ChatRoom chatRoom = ChatRoom.builder()
-      .name(name)
-      .createdAt(LocalDateTime.now())
-      .updatedAt(LocalDateTime.now())
-      .build();
-    chatRoomRepository.save(chatRoom);
-
-    // 2. Redis에 채팅방 생성
-    return chatRoomRedisRepository.createChatRoom(name);
+    ChatRoom chatRoom = ChatRoom.create(name);
+    chatRoomMongoRepo.save(chatRoom);
+    chatRoomRedisRepo.saveChatRoom(chatRoom);
+    return chatRoom;
   }
 
-  // MongoDB에서 모든 채팅방 조회
-  public List<ChatRoom> getAllChatRoomsFromDB() {
-    return chatRoomRedisRepository.findAllRoom();
-  }
-
-  // Redis에서 모든 채팅방 조회
-  public List<ChatRoom> getAllChatRoomsFromRedis() {
-    return chatRoomRedisRepository.findAllRoom();
-  }
-
-  // MongoDB에서 채팅방 ID로 조회
-  public ChatRoom getChatRoomByIdFromDB(String roomId) {
-    return chatRoomRedisRepository.findRoomById(roomId);
-  }
-
-  // Redis에서 채팅방 ID로 조회
-  public ChatRoom getChatRoomByIdFromRedis(String roomId) {
-    return chatRoomRedisRepository.findRoomById(roomId);
-  }
-
-  // 채팅방 입장 서비스
   public void enterChatRoom(String roomId) {
-    chatRoomRedisRepository.enterChatRoom(roomId);
+    ChannelTopic topic = topics.get(roomId);
+    if (topic == null) {
+      topic = new ChannelTopic(roomId);
+      redisMessageListener.addMessageListener(redisSubscriber, topic);
+      topics.put(roomId, topic);
+    }
+  }
+
+  public ChannelTopic getTopic(String roomId) {
+    return topics.get(roomId);
+  }
+
+  /**
+   * 사용자가 전문가와 채팅하기 버튼을 누르면 전문가와 사용자의 이름으로 만들어진 채팅방 생성(1:1 채팅)
+   * @param expertId 전문가 @ID
+   * @param memberId 멤버 @ID
+   * @return ChatRoom
+   */
+  public ChatRoom startChatRoomWithExpert(long expertId, long memberId) {
+    ChatRoom chatRoom = ChatRoom.create(expertId + "_" + memberId);
+    chatRoomMongoRepo.save(chatRoom);
+    chatRoomRedisRepo.saveChatRoom(chatRoom);
+    return chatRoom;
+  }
+
+  /**
+   * 전문가가 자신이 속한 채팅방 목록 을 볼 수 있게
+   * @param expertId 전문가 @ID
+   * @return List<ChatRoom>
+   */
+  public List<ChatRoom> getExpertRooms(long expertId) {
+    return chatRoomMongoRepo.findByNameStartingWith(expertId + "_");
   }
 }
