@@ -16,8 +16,11 @@ services:
       SPRING_DATA_MONGODB_URI: ${MONGO_URI}
       SPRING_DATA_MONGODB_USERNAME: ${MONGO_USERNAME}
       SPRING_DATA_MONGODB_PASSWORD: ${MONGO_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -32,11 +35,11 @@ services:
       - db_mysql:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # init.sql 파일 매핑
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
-      interval: 10s
-      retries: 5
+      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u ${DB_USERNAME} --password=${DB_PASSWORD} || exit 1" ]
+      interval: 5s
+      retries: 10
       start_period: 30s
-      timeout: 10s
+      timeout: 5s
     networks:
       - app-network
 
