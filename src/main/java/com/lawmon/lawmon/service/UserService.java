@@ -1,55 +1,56 @@
 package com.lawmon.lawmon.service;
 
-import com.lawmon.lawmon.Entity.Member;
-import com.lawmon.lawmon.dto.SignupRequestDto;
+import com.lawmon.lawmon.Entity.*;
 import com.lawmon.lawmon.dto.LoginRequestDto;
-import com.lawmon.lawmon.dto.UserResponseDto;
+import com.lawmon.lawmon.dto.SignupRequestDto;
 import com.lawmon.lawmon.repository.UserRepository;
+import com.lawmon.lawmon.repository.ExpertRepository;
+import com.lawmon.lawmon.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
+    private final ExpertRepository expertRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public UserResponseDto signup(SignupRequestDto request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+    public void signup(SignupRequestDto request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        if (request.getRole() == Role.EXPERT) {
+            Expert expert = new Expert();
+            expert.setEmail(request.getEmail());
+            expert.setPassword(encodedPassword);
+            expert.setRole(Role.EXPERT);
+            expert.setName(request.getName());
+            expert.setSpecialty(request.getSpecialty());
+            expert.setLicenseNumber(request.getLicenseNumber());
+            expertRepository.save(expert);
+        } else {
+            User user = new User();
+            user.setEmail(request.getEmail());
+            user.setPassword(encodedPassword);
+            user.setRole(Role.USER);
+            user.setUsername(request.getName());
+            userRepository.save(user);
         }
-
-        Member member = Member.builder()
-                .email(request.getEmail())
-                .name(request.getName())
-                .profileImage(request.getProfileImage())
-                .password(request.getPassword()) // 비밀번호 암호화 생략
-                .specialty(Member.Specialty.valueOf(request.getSpecialty().toUpperCase())) // USER 또는 EXPERT
-                .build();
-
-        userRepository.save(member);
-
-        return UserResponseDto.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .name(member.getName())
-                .specialty(member.getSpecialty().name())
-                .build();
     }
 
-    public UserResponseDto login(LoginRequestDto request) {
-        Member member = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    public String login(LoginRequestDto request) {
+        BaseUser user = userRepository.findByEmail(request.getEmail())
+                .map(BaseUser.class::cast)
+                .orElseGet(() -> expertRepository.findByEmail(request.getEmail())
+                        .map(BaseUser.class::cast)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음")));
 
-        if (!member.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("비밀번호 불일치");
         }
 
-        return UserResponseDto.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .name(member.getName())
-                .specialty(member.getSpecialty().name())
-                .build();
+        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 }
