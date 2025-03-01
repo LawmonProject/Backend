@@ -2,6 +2,7 @@ package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.dto.ChatRoomDto;
 import com.lawmon.lawmon.Entity.ChatRoom;
+import com.lawmon.lawmon.dto.ChatStartRequest;
 import com.lawmon.lawmon.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class ChatRoomController {
         .build())  // 필요한 필드들로 변환
       .collect(Collectors.toList());
   }
+
   // 채팅방 생성
   @PostMapping("/room")
   @ResponseBody
@@ -72,14 +74,13 @@ public class ChatRoomController {
   /**
    * 사용자가 전문가와 채팅하기 버튼을 누르면 전문가와 사용자의 @ID로 만들어진 채팅방 생성(1:1 채팅)
    * 채팅방 이름 : ${ExpertId_MemberId}
-   * @param expertId 전문가 @ID
-   * @param memberId 멤버 @ID
-   * @return RoomId, Name
+   * @param chatStartRequest ;
+   * @return ;
    */
   @PostMapping("/room/expert")
   @ResponseBody
-  public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestParam long expertId, @RequestParam long memberId) {
-    ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(expertId, memberId);
+  public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestBody ChatStartRequest chatStartRequest) {
+    ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(chatStartRequest.getExpertId(), chatStartRequest.getMemberId());
     return ResponseEntity.ok(ChatRoomDto.builder()
       .name(chatRoom.getName())
       .roomId(chatRoom.getRoomId())
