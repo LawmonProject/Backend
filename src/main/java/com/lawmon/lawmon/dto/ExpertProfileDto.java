@@ -1,21 +1,19 @@
-package com.lawmon.lawmon.Entity;
+package com.lawmon.lawmon.dto;
 
-import jakarta.persistence.*;
+import com.lawmon.lawmon.Entity.ExpertCategory;
 import lombok.*;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Expert extends BaseUser {
+@Builder
+public class ExpertProfileDto {
     private String name;
     private String specialty;
     private String licenseNumber;
-
-    @Enumerated(EnumType.STRING)
     private ExpertCategory category;
-
+    private String email;
     private String phoneNumber;
     private String experience;
     private String profileImageUrl;
