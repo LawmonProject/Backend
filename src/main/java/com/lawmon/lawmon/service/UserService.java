@@ -3,6 +3,7 @@ package com.lawmon.lawmon.service;
 import com.lawmon.lawmon.Entity.*;
 import com.lawmon.lawmon.dto.LoginRequestDto;
 import com.lawmon.lawmon.dto.SignupRequestDto;
+import com.lawmon.lawmon.dto.UserResponseDto;
 import com.lawmon.lawmon.repository.UserRepository;
 import com.lawmon.lawmon.repository.ExpertRepository;
 import com.lawmon.lawmon.security.JwtUtil;
@@ -18,7 +19,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public void signup(SignupRequestDto request) {
+    public UserResponseDto signup(SignupRequestDto request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         if (request.getRole() == Role.EXPERT) {
@@ -29,14 +30,31 @@ public class UserService {
             expert.setName(request.getName());
             expert.setSpecialty(request.getSpecialty());
             expert.setLicenseNumber(request.getLicenseNumber());
-            expertRepository.save(expert);
+            expert.setCategory(request.getCategory());
+
+            Expert savedExpert = expertRepository.save(expert);
+
+            return new UserResponseDto(
+                    savedExpert.getId(),
+                    savedExpert.getEmail(),
+                    savedExpert.getName(),
+                    savedExpert.getRole().name()
+            );
         } else {
             User user = new User();
             user.setEmail(request.getEmail());
             user.setPassword(encodedPassword);
             user.setRole(Role.USER);
             user.setUsername(request.getName());
-            userRepository.save(user);
+
+            User savedUser = userRepository.save(user);
+
+            return new UserResponseDto(
+                    savedUser.getId(),
+                    savedUser.getEmail(),
+                    savedUser.getUsername(),
+                    savedUser.getRole().name()
+            );
         }
     }
 
