@@ -1,38 +1,49 @@
 package com.lawmon.lawmon.service;
 
 import com.lawmon.lawmon.Entity.Expert;
+import com.lawmon.lawmon.dto.ExpertListDto;
 import com.lawmon.lawmon.dto.ExpertProfileDto;
 import com.lawmon.lawmon.repository.ExpertRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ExpertService {
     private final ExpertRepository expertRepository;
 
+    public List<ExpertListDto> getAllExperts() {
+        return expertRepository.findAll().stream()
+                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .collect(Collectors.toList());
+    }
+
     public ExpertProfileDto getExpertProfile(String email) {
         Expert expert = expertRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("해당 이메일을 가진 전문가를 찾을 수 없습니다: " + email));
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 이메일을 가진 전문가를 찾을 수 없습니다: " + email));
         return convertToDto(expert);
     }
 
     @Transactional
     public ExpertProfileDto updateExpertProfile(String email, ExpertProfileDto dto) {
         Expert expert = expertRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("해당 이메일을 가진 전문가를 찾을 수 없습니다: " + email));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 이메일을 가진 전문가를 찾을 수 없습니다: " + email));
 
-        if (dto.getName() != null) expert.setName(dto.getName());
-        if (dto.getSpecialty() != null) expert.setSpecialty(dto.getSpecialty());
-        if (dto.getLicenseNumber() != null) expert.setLicenseNumber(dto.getLicenseNumber());
-        if (dto.getCategory() != null) expert.setCategory(dto.getCategory());
-        if (dto.getPhoneNumber() != null) expert.setPhoneNumber(dto.getPhoneNumber());
-        if (dto.getExperience() != null) expert.setExperience(dto.getExperience());
-        if (dto.getProfileImageUrl() != null) expert.setProfileImageUrl(dto.getProfileImageUrl());
+        // null 체크 후 업데이트
+        Optional.ofNullable(dto.getName()).ifPresent(expert::setName);
+        Optional.ofNullable(dto.getSpecialty()).ifPresent(expert::setSpecialty);
+        Optional.ofNullable(dto.getLicenseNumber()).ifPresent(expert::setLicenseNumber);
+        Optional.ofNullable(dto.getCategory()).ifPresent(expert::setCategory);
+        Optional.ofNullable(dto.getPhoneNumber()).ifPresent(expert::setPhoneNumber);
+        Optional.ofNullable(dto.getExperience()).ifPresent(expert::setExperience);
+        Optional.ofNullable(dto.getProfileImageUrl()).ifPresent(expert::setProfileImageUrl);
 
         expertRepository.save(expert);
         return convertToDto(expert);
