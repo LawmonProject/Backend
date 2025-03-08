@@ -2,16 +2,17 @@ package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.Entity.Specialty;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/categories")
+@Tag(name = "Category API", description = "카테고리 API")
 public class CategoryController {
 
     private static final Map<Specialty, String> CATEGORY_DISPLAY_NAMES = Map.of(
@@ -22,15 +23,11 @@ public class CategoryController {
 
     @Operation(summary = "카테고리 목록 조회", description = "지원되는 카테고리 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getCategories() {
+    public ResponseEntity<List<String>> getCategories() {
         List<String> categories = Arrays.stream(Specialty.values())
                 .map(CATEGORY_DISPLAY_NAMES::get)
-                .collect(Collectors.toList());
+                .toList();
 
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "요청에 성공하였습니다.",
-                "data", Map.of("categories", categories)
-        ));
+        return ResponseEntity.ok(categories);
     }
 }
