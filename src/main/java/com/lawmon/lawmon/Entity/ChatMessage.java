@@ -1,41 +1,26 @@
 package com.lawmon.lawmon.Entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import com.lawmon.lawmon.dto.ChatMessageDto;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Document("chat")
 public class ChatMessage {
+    // 메시지 타입 : 입장, 채팅
+    private ChatMessageDto.MessageType type; // 메시지 타입
+    private String roomId; // 방번호
+    private String sender; // 메시지 보낸사람
+    private String message; // 메시지
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "sessionId", nullable = false)
-    private ChatSession chatSession;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Sender sender;
-
-    @Column(columnDefinition = "TEXT")
-    private String message;
-
-    @Column(name = "sent_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime sentAt;
-
-    public enum Sender {
-        USER, GPT
-    }
+    @Builder.Default
+    private LocalDateTime timestamp = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();  // 메시지 전송 시간
 }

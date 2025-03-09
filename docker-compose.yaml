@@ -13,9 +13,14 @@ services:
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATA_MONGODB_URI: ${MONGO_URI}
+      SPRING_DATA_MONGODB_USERNAME: ${MONGO_USERNAME}
+      SPRING_DATA_MONGODB_PASSWORD: ${MONGO_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
     depends_on:
       mysql:
-        condition: service_healthy  # 컨테이너가 준비되었는지 확인
+        condition: service_healthy
     networks:
       - app-network
 
@@ -30,18 +35,46 @@ services:
       - db_mysql:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # init.sql 파일 매핑
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
-      interval: 10s
-      retries: 5
+      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u ${DB_USERNAME} --password=${DB_PASSWORD} || exit 1" ]
+      interval: 5s
+      retries: 10
       start_period: 30s
-      timeout: 10s
+      timeout: 5s
     networks:
       - app-network
 
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - db_redis:/data
+    #      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    #    labels:
+    #      - "name=redis"
+    #      - "mode=standalone"
+    restart: always
+    #    command: redis-server /usr/local/conf/redis.conf
+    networks:
+      - app-network
 
+#  mongo:
+#    container_name: mongo
+#    image: mongo:latest
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - db_mongo:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: lawmon
+#      MONGO_INITDB_ROOT_PASSWORD: qwer
+#    restart: always
 
 volumes:
   db_mysql:
+  db_redis:
+#  db_mongo:
 
 
 networks:
