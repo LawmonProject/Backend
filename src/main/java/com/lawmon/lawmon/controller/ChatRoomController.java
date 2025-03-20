@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/api/v1/chat")
 public class ChatRoomController {
 
   //  private final ChatRoomRedisRepo chatRoomRepository;
