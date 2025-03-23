@@ -24,7 +24,7 @@ public class MongoConfig {
   ) {
     DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory);
     MappingMongoConverter mappingConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
-    mappingConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
+    mappingConverter.setTypeMapper(new DefaultMongoTypeMapper(null)); //_class 제거
     return mappingConverter;
   }
 }
