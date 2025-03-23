@@ -6,6 +6,8 @@ import com.lawmon.lawmon.dto.RoomRequest;
 import com.lawmon.lawmon.pubsub.RedisPublisher;
 import com.lawmon.lawmon.service.ChatMessageService;
 import com.lawmon.lawmon.service.ChatRoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/")
+@Tag(name = "Chat API", description = "채팅 API")
 public class ChatController {
 
   private final RedisPublisher redisPublisher;
@@ -44,11 +47,12 @@ public class ChatController {
 
   /**
    * 채팅방 내의 메세지 조회
-   * @param roomRequest ;
+   * @param roomRequest
    * @return List<ChatMessageDto>
    */
   @PostMapping("/chat/get")
   @ResponseBody
+  @Operation(summary = "채팅방 메세지 조회", description = "채팅방의 메세지를 조회합니다.")
   public ResponseEntity<List<ChatMessageDto>> get(@RequestBody RoomRequest roomRequest) {
     List<ChatMessage> chatMessages = chatMessageService.getChatMessages(roomRequest.getRoomId());
     return ResponseEntity.ok(chatMessages.stream()

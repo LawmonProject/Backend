@@ -4,6 +4,7 @@ import com.lawmon.lawmon.dto.ChatMessageDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Getter
-@Setter
 @Builder
 @Document("chat")
+@CompoundIndex(name="roomId_timestamp_index", def = "{'roomId': 1, 'timestamp': -1}")
 public class ChatMessage {
     // 메시지 타입 : 입장, 채팅
     private ChatMessageDto.MessageType type; // 메시지 타입
