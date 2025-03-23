@@ -9,6 +9,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,5 +75,11 @@ public class ChatRoomService {
    */
   public List<ChatRoom> getExpertRooms(long expertId) {
     return chatRoomMongoRepo.findByNameStartingWith(expertId + "_");
+  }
+
+  public void insertBulkChatRoom() {
+    List<ChatRoom> chatRooms = Arrays.asList(
+      new ChatRoom()
+    );
   }
 }
