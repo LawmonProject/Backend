@@ -1,12 +1,10 @@
-package com.lawmon.lawmon.dto;
+package com.lawmon.lawmon.dto.chatroom;
 
 import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Builder

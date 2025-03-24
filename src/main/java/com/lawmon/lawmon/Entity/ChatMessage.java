@@ -1,9 +1,8 @@
 package com.lawmon.lawmon.Entity;
 
-import com.lawmon.lawmon.dto.ChatMessageDto;
+import com.lawmon.lawmon.dto.chatmessage.ChatMessageDto;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 

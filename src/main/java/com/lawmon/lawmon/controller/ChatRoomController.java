@@ -1,8 +1,7 @@
 package com.lawmon.lawmon.controller;
 
-import com.lawmon.lawmon.dto.ChatRoomDto;
+import com.lawmon.lawmon.dto.chatroom.ChatRoomDto;
 import com.lawmon.lawmon.Entity.ChatRoom;
-import com.lawmon.lawmon.dto.ChatStartRequest;
 import com.lawmon.lawmon.service.ChatRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -98,14 +97,15 @@ public class ChatRoomController {
   /**
    * 사용자가 전문가와 채팅하기 버튼을 누르면 전문가와 사용자의 @ID로 만들어진 채팅방 생성(1:1 채팅)
    * 채팅방 이름 : ${ExpertId_MemberId}
-   * @param chatStartRequest ;
+   * @param expertId
+   * @param memberId
    * @return ;
    */
   @PostMapping("/room/expert")
   @ResponseBody
   @Operation(summary = "채팅방 생성", description = "expertId, memberId로 채팅방을 생성합니다.채팅방 이름 : (expertId_memberId)")
-  public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestBody ChatStartRequest chatStartRequest) {
-    ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(chatStartRequest.getExpertId(), chatStartRequest.getMemberId());
+  public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestParam long expertId, @RequestParam long memberId) {
+    ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(expertId, memberId);
     return ResponseEntity.ok(ChatRoomDto.builder()
       .name(chatRoom.getName())
       .roomId(chatRoom.getRoomId())

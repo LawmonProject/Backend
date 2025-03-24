@@ -1,22 +1,17 @@
 package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.Entity.ChatMessage;
-import com.lawmon.lawmon.dto.ChatMessageDto;
-import com.lawmon.lawmon.dto.RoomRequest;
+import com.lawmon.lawmon.dto.chatmessage.ChatMessageDto;
 import com.lawmon.lawmon.pubsub.RedisPublisher;
 import com.lawmon.lawmon.service.ChatMessageService;
 import com.lawmon.lawmon.service.ChatRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,14 +42,14 @@ public class ChatController {
 
   /**
    * 채팅방 내의 메세지 조회
-   * @param roomRequest
+   * @param roomId
    * @return List<ChatMessageDto>
    */
   @PostMapping("/chat/get")
   @ResponseBody
-  @Operation(summary = "채팅방 메세지 조회", description = "채팅방의 메세지를 조회합니다.")
-  public ResponseEntity<List<ChatMessageDto>> get(@RequestBody RoomRequest roomRequest) {
-    List<ChatMessage> chatMessages = chatMessageService.getChatMessages(roomRequest.getRoomId());
+  @Operation(summary = "채팅방 메세지 조회", description = "채팅방의 메세지를 조회합니다.(최신순)")
+  public ResponseEntity<List<ChatMessageDto>> get(@RequestParam String roomId) {
+    List<ChatMessage> chatMessages = chatMessageService.getChatMessages(roomId);
     return ResponseEntity.ok(chatMessages.stream()
       .map(chatMessage -> ChatMessageDto.builder()
         .type(chatMessage.getType())
