@@ -4,6 +4,8 @@ import com.lawmon.lawmon.dto.ChatRoomDto;
 import com.lawmon.lawmon.Entity.ChatRoom;
 import com.lawmon.lawmon.dto.ChatStartRequest;
 import com.lawmon.lawmon.service.ChatRoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,19 +18,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/chat")
+@Tag(name = "ChatRoom API", description = "채팅방 API")
 public class ChatRoomController {
 
   //  private final ChatRoomRedisRepo chatRoomRepository;
   private final ChatRoomService chatRoomService;
 
-  // 채팅 리스트 화면
+  /**
+   * 채팅 리스트 화면
+   * @param model
+   * @return 채팅 리스트 화면
+   */
   @GetMapping("/room")
   public String rooms(Model model) {
     return "/chat/room";
   }
-  // 모든 채팅방 목록 반환
+
+  /**
+   * 모든 채팅방 목록 반환
+   * @return List<ChatRoomDto>
+   */
   @GetMapping("/rooms")
   @ResponseBody
+  @Operation(summary = "채팅방 목록 조회", description = "모든 채팅방 목록을 조회합니다.")
   public List<ChatRoomDto> room() {
     List<ChatRoom> chatRooms =  chatRoomService.getAllRooms();
     return chatRooms.stream()
@@ -39,9 +51,14 @@ public class ChatRoomController {
       .collect(Collectors.toList());
   }
 
-  // 채팅방 생성
+  /**
+   * 채팅방 생성
+   * @param name
+   * @return ChatRoomDto
+   */
   @PostMapping("/room")
   @ResponseBody
+  @Operation(summary = "채팅방 생성(테스트용)", description = "채팅방을 생성합니다(테스트용)")
   public ChatRoomDto createRoom(@RequestParam String name) {
     ChatRoom chatRoom =  chatRoomService.createChatRoom(name);
     return ChatRoomDto.builder()
@@ -49,7 +66,13 @@ public class ChatRoomController {
       .roomId(chatRoom.getRoomId())
       .build();
   }
-  // 채팅방 입장 화면
+
+  /**
+   * 채팅방 입장 화면
+   * @param model
+   * @param roomId
+   * @return 채팅방 입장 화면
+   */
   @GetMapping("/room/enter/{roomId}")
   public String roomDetail(Model model, @PathVariable String roomId) {
     model.addAttribute("roomId", roomId);
@@ -63,6 +86,7 @@ public class ChatRoomController {
    */
   @GetMapping("/room/{roomId}")
   @ResponseBody
+  @Operation(summary = "채팅방 정보 조회", description = "채팅방 정보(roodId, name)를 조회합니다.")
   public ResponseEntity<ChatRoomDto> roomInfo(@PathVariable String roomId) {
     ChatRoom chatRoom =  chatRoomService.getRoomById(roomId);
     return ResponseEntity.ok(ChatRoomDto.builder()
@@ -79,6 +103,7 @@ public class ChatRoomController {
    */
   @PostMapping("/room/expert")
   @ResponseBody
+  @Operation(summary = "채팅방 생성", description = "expertId, memberId로 채팅방을 생성합니다.채팅방 이름 : (expertId_memberId)")
   public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestBody ChatStartRequest chatStartRequest) {
     ChatRoom chatRoom = chatRoomService.startChatRoomWithExpert(chatStartRequest.getExpertId(), chatStartRequest.getMemberId());
     return ResponseEntity.ok(ChatRoomDto.builder()
@@ -94,6 +119,7 @@ public class ChatRoomController {
    */
   @GetMapping("/rooms/{expertId}")
   @ResponseBody
+  @Operation(summary = "채팅방 조회(전문가용)", description = "자신이 속한 채팅방을 조회합니다(전문가용).")
   public ResponseEntity<List<ChatRoomDto>> room(@PathVariable long expertId) {
     List<ChatRoom> chatRooms =  chatRoomService.getExpertRooms(expertId);
     return ResponseEntity.ok(chatRooms.stream()

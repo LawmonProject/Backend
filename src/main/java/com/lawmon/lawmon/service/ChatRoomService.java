@@ -2,13 +2,14 @@ package com.lawmon.lawmon.service;
 
 import com.lawmon.lawmon.Entity.ChatRoom;
 import com.lawmon.lawmon.pubsub.RedisSubscriber;
-import com.lawmon.lawmon.repository.ChatRoomMongoRepo;
+import com.lawmon.lawmon.repository.ChatRoomRepo;
 import com.lawmon.lawmon.repository.ChatRoomRedisRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,25 +19,25 @@ import java.util.Map;
 public class ChatRoomService {
 
   private final ChatRoomRedisRepo chatRoomRedisRepo;
-  private final ChatRoomMongoRepo chatRoomMongoRepo;
+  private final ChatRoomRepo chatRoomRepo;
 
   private final RedisMessageListenerContainer redisMessageListener;
   private final RedisSubscriber redisSubscriber;
   private Map<String, ChannelTopic> topics = new HashMap<>();
 
   public List<ChatRoom> getAllRooms() {
-    // return chatRoomMongoRepo.findAll();
+    // return chatRoomRepo.findAll();
     return chatRoomRedisRepo.findAllRoom();
   }
 
   public ChatRoom getRoomById(String id) {
-    return chatRoomMongoRepo.findByRoomId(id);
+    return chatRoomRepo.findByRoomId(id);
 //    return chatRoomRedisRepo.findRoomById(id);
   }
 
   public ChatRoom createChatRoom(String name) {
     ChatRoom chatRoom = ChatRoom.create(name);
-    chatRoomMongoRepo.save(chatRoom);
+    chatRoomRepo.save(chatRoom);
     chatRoomRedisRepo.saveChatRoom(chatRoom);
     return chatRoom;
   }
@@ -62,7 +63,7 @@ public class ChatRoomService {
    */
   public ChatRoom startChatRoomWithExpert(long expertId, long memberId) {
     ChatRoom chatRoom = ChatRoom.create(expertId + "_" + memberId);
-    chatRoomMongoRepo.save(chatRoom);
+    chatRoomRepo.save(chatRoom);
     chatRoomRedisRepo.saveChatRoom(chatRoom);
     return chatRoom;
   }
@@ -73,6 +74,12 @@ public class ChatRoomService {
    * @return List<ChatRoom>
    */
   public List<ChatRoom> getExpertRooms(long expertId) {
-    return chatRoomMongoRepo.findByNameStartingWith(expertId + "_");
+    return chatRoomRepo.findByNameStartingWith(expertId + "_");
+  }
+
+  public void insertBulkChatRoom() {
+    List<ChatRoom> chatRooms = Arrays.asList(
+      new ChatRoom()
+    );
   }
 }
