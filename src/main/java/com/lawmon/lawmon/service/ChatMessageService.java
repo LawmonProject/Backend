@@ -15,7 +15,7 @@ public class ChatMessageService {
   private final ChatMessageRepo chatMessageRepo;
 
   public List<ChatMessage> getChatMessages(String roomId) {
-    return chatMessageRepo.findByRoomId(roomId);
+    return chatMessageRepo.findByRoomIdOrderByTimestampDesc(roomId);
   }
 
   public void addChatMessage(ChatMessage chatMessage) {
