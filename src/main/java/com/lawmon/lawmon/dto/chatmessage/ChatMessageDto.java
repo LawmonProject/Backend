@@ -1,4 +1,4 @@
-package com.lawmon.lawmon.dto;
+package com.lawmon.lawmon.dto.chatmessage;
 
 import lombok.Builder;
 import lombok.Getter;

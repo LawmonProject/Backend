@@ -1,6 +1,6 @@
 package com.lawmon.lawmon.pubsub;
 
-import com.lawmon.lawmon.dto.ChatMessageDto;
+import com.lawmon.lawmon.dto.chatmessage.ChatMessageDto;
 import com.lawmon.lawmon.Entity.ChatMessage;
 import com.lawmon.lawmon.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor

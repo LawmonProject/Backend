@@ -18,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-  private final ChatRoomRedisRepo chatRoomRedisRepo;
+//  private final ChatRoomRedisRepo chatRoomRedisRepo;
   private final ChatRoomRepo chatRoomRepo;
 
   private final RedisMessageListenerContainer redisMessageListener;
@@ -26,8 +26,8 @@ public class ChatRoomService {
   private Map<String, ChannelTopic> topics = new HashMap<>();
 
   public List<ChatRoom> getAllRooms() {
-    // return chatRoomRepo.findAll();
-    return chatRoomRedisRepo.findAllRoom();
+    return chatRoomRepo.findAll();
+//    return chatRoomRedisRepo.findAllRoom();
   }
 
   public ChatRoom getRoomById(String id) {
@@ -38,7 +38,7 @@ public class ChatRoomService {
   public ChatRoom createChatRoom(String name) {
     ChatRoom chatRoom = ChatRoom.create(name);
     chatRoomRepo.save(chatRoom);
-    chatRoomRedisRepo.saveChatRoom(chatRoom);
+//    chatRoomRedisRepo.saveChatRoom(chatRoom);
     return chatRoom;
   }
 
@@ -64,7 +64,7 @@ public class ChatRoomService {
   public ChatRoom startChatRoomWithExpert(long expertId, long memberId) {
     ChatRoom chatRoom = ChatRoom.create(expertId + "_" + memberId);
     chatRoomRepo.save(chatRoom);
-    chatRoomRedisRepo.saveChatRoom(chatRoom);
+//    chatRoomRedisRepo.saveChatRoom(chatRoom);
     return chatRoom;
   }
 
@@ -77,9 +77,9 @@ public class ChatRoomService {
     return chatRoomRepo.findByNameStartingWith(expertId + "_");
   }
 
-  public void insertBulkChatRoom() {
-    List<ChatRoom> chatRooms = Arrays.asList(
-      new ChatRoom()
-    );
-  }
+//  public void insertBulkChatRoom() {
+//    List<ChatRoom> chatRooms = Arrays.asList(
+//      new ChatRoom()
+//    );
+//  }
 }
