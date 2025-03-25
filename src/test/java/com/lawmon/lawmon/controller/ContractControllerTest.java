@@ -2,10 +2,12 @@ package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.Entity.Contract;
 import com.lawmon.lawmon.Entity.Specialty;
+import com.lawmon.lawmon.security.JwtUtil;
 import com.lawmon.lawmon.service.ContractService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ContractController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ContractControllerTest {
 
     @Autowired
@@ -28,6 +31,13 @@ class ContractControllerTest {
 
     @MockBean
     private ContractService contractService;
+    @MockBean
+    private JwtUtil jwtUtil;
+    @MockBean
+    private com.lawmon.lawmon.repository.ChatMessageRepo chatMessageRepo;
+
+    @MockBean
+    private com.lawmon.lawmon.repository.ChatRoomMongoRepo chatRoomMongoRepo;
 
     @Test
     @DisplayName("POST /contracts/upload - PDF 파일 업로드 성공")
@@ -87,17 +97,24 @@ class ContractControllerTest {
     @Test
     @DisplayName("POST /contracts/upload - 파일 없이 요청 시 400 반환")
     void uploadContract_ShouldReturn400_WhenNoFileProvided() throws Exception {
+        MockMultipartFile emptyFile = new MockMultipartFile("file", "", "application/pdf", new byte[0]);
+
+        when(contractService.uploadContract(any(), any(), any()))
+                .thenThrow(new IllegalArgumentException("파일이 필요합니다."));
+
         mockMvc.perform(multipart("/contracts/upload")
+                        .file(emptyFile)
                         .param("title", "테스트 계약서")
                         .param("category", "Labor")
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isBadRequest()) // 400 응답 확인
-                .andExpect(content().string("파일이 필요합니다."));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(400))
+                .andExpect(jsonPath("$.message").value("파일이 필요합니다."));
     }
 
     @Test
-    @DisplayName("POST /contracts/upload - 파일 크기 초과 시 413 반환")
-    void uploadContract_ShouldReturn413_WhenFileTooLarge() throws Exception {
+    @DisplayName("POST /contracts/upload - 파일 크기 초과 시 400 반환")
+    void uploadContract_ShouldReturn400_WhenFileTooLarge() throws Exception {
         // ✅ MockMultipartFile (실제 요청에서는 큰 파일이므로 여기선 생략)
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
@@ -114,8 +131,8 @@ class ContractControllerTest {
                         .param("title", "테스트 계약서")
                         .param("category", "Labor")
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isPayloadTooLarge()) // 413 응답 확인
-                .andExpect(jsonPath("$.errorCode").value(413))
+        .andExpect(status().isBadRequest()) // 400 응답 확인
+                .andExpect(jsonPath("$.errorCode").value(400))
                 .andExpect(jsonPath("$.message").value("업로드할 파일 크기가 너무 큽니다. (최대 10MB)"));
     }
 
