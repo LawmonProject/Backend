@@ -37,7 +37,7 @@ class ContractControllerTest {
     private com.lawmon.lawmon.repository.ChatMessageRepo chatMessageRepo;
 
     @MockBean
-    private com.lawmon.lawmon.repository.ChatRoomMongoRepo chatRoomMongoRepo;
+    private com.lawmon.lawmon.repository.ChatRoomRepo chatRoomMongoRepo;
 
     @Test
     @DisplayName("POST /contracts/upload - PDF 파일 업로드 성공")
