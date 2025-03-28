@@ -60,4 +60,18 @@ public class ChatController {
         .build())
       .collect(Collectors.toList()));
   }
+
+
+
+  /**
+   * MongoDB Bulk Insert
+   * @param roomId
+   * @param repetition
+   */
+  @GetMapping("/chat/bulkinsert")
+  @ResponseBody
+  @Operation(summary = "MongoDB Bulk Insert", description = "MongoDB indexing 성능 테스트를 위해 bulk insert : index -> data의 개수")
+  public void bulkInsert(@RequestParam String roomId, @RequestParam int repetition) {
+    chatMessageService.insertBulkChatMessages(roomId, repetition);
+  }
 }
