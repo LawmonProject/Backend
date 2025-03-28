@@ -11,8 +11,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.UUID;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 @Slf4j
 @Service
@@ -52,6 +54,15 @@ public class S3Service {
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, fileName);
     }
 
+    public InputStream downloadFile(String url) {
+        String key = extractKeyFromUrl(url); // contracts/uuid_filename.pdf
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+        return s3Client.getObject(getObjectRequest);
+    }
+
     private void removeNewFile(File targetFile) {
         if (targetFile.delete()) {
             log.info("[Service] 임시 파일 삭제 완료: {}", targetFile.getName());
@@ -67,5 +78,9 @@ public class S3Service {
         }
         log.info("[Service] 파일 변환 성공: {}", tempFile.getAbsolutePath());
         return tempFile;
+    }
+
+    private String extractKeyFromUrl(String url) {
+        return url.substring(url.indexOf(".com/") + 5);
     }
 }
