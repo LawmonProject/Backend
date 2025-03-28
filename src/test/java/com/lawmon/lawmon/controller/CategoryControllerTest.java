@@ -2,7 +2,7 @@ package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.Entity.Specialty;
 import com.lawmon.lawmon.repository.ChatMessageRepo;
-import com.lawmon.lawmon.repository.ChatRoomMongoRepo;
+import com.lawmon.lawmon.repository.ChatRoomRepo;
 import com.lawmon.lawmon.repository.ExpertRepository;
 import com.lawmon.lawmon.repository.UserRepository;
 import com.lawmon.lawmon.security.JwtAuthenticationFilter;
@@ -36,7 +36,7 @@ class CategoryControllerTest {
     @MockBean
     private ChatMessageRepo chatMessageRepo;
     @MockBean
-    private ChatRoomMongoRepo chatRoomMongoRepo;
+    private ChatRoomRepo chatRoomMongoRepo;
     @MockBean
     private UserRepository userRepository;
     @MockBean
