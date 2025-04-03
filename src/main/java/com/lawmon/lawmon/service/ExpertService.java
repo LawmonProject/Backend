@@ -1,6 +1,8 @@
 package com.lawmon.lawmon.service;
 
 import com.lawmon.lawmon.Entity.Expert;
+import com.lawmon.lawmon.Entity.ExpertCategory;
+import com.lawmon.lawmon.Entity.Specialty;
 import com.lawmon.lawmon.dto.ExpertListDto;
 import com.lawmon.lawmon.dto.ExpertProfileDto;
 import com.lawmon.lawmon.repository.ExpertRepository;
@@ -8,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExpertService {
     private final ExpertRepository expertRepository;
+    private final LocalFileService localFileService;
 
     public List<ExpertListDto> getAllExperts() {
         return expertRepository.findAll().stream()
@@ -31,12 +36,29 @@ public class ExpertService {
         return convertToDto(expert);
     }
 
+    public ExpertProfileDto getExpertByEmail(String email) {
+        Expert expert = expertRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "전문가를 찾을 수 없습니다: " + email));
+        return convertToDto(expert);
+    }
+
+    public List<ExpertListDto> getExpertsByCategory(ExpertCategory category) {
+        return expertRepository.findByCategory(category).stream()
+                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .collect(Collectors.toList());
+    }
+
+    public List<ExpertListDto> getExpertsBySpecialty(Specialty specialty) {
+        return expertRepository.findBySpecialty(specialty).stream()
+                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public ExpertProfileDto updateExpertProfile(String email, ExpertProfileDto dto) {
         Expert expert = expertRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 이메일을 가진 전문가를 찾을 수 없습니다: " + email));
 
-        // null 체크 후 업데이트
         Optional.ofNullable(dto.getName()).ifPresent(expert::setName);
         Optional.ofNullable(dto.getSpecialty()).ifPresent(expert::setSpecialty);
         Optional.ofNullable(dto.getLicenseNumber()).ifPresent(expert::setLicenseNumber);
@@ -47,6 +69,17 @@ public class ExpertService {
 
         expertRepository.save(expert);
         return convertToDto(expert);
+    }
+
+    @Transactional
+    public String uploadProfileImageLocally(String email, MultipartFile file) throws IOException {
+        Expert expert = expertRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "전문가를 찾을 수 없습니다"));
+
+        String relativeUrl = localFileService.saveProfileImage(file);
+        expert.setProfileImageUrl(relativeUrl);
+        expertRepository.save(expert);
+        return relativeUrl;
     }
 
     private ExpertProfileDto convertToDto(Expert expert) {
