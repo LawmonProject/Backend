@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("/api/v1/chat")
 @Tag(name = "ChatRoom API", description = "채팅방 API")
 public class ChatRoomController {
 
@@ -55,7 +55,7 @@ public class ChatRoomController {
    * @param name
    * @return ChatRoomDto
    */
-  @PostMapping("/room")
+  @PostMapping("/rooms")
   @ResponseBody
   @Operation(summary = "채팅방 생성(테스트용)", description = "채팅방을 생성합니다(테스트용)")
   public ChatRoomDto createRoom(@RequestParam String name) {
@@ -83,7 +83,7 @@ public class ChatRoomController {
    * @param roomId RoomId
    * @return RoomId, Name
    */
-  @GetMapping("/room/{roomId}")
+  @GetMapping("/rooms/{roomId}")
   @ResponseBody
   @Operation(summary = "채팅방 정보 조회", description = "채팅방 정보(roodId, name)를 조회합니다.")
   public ResponseEntity<ChatRoomDto> roomInfo(@PathVariable String roomId) {
@@ -101,7 +101,7 @@ public class ChatRoomController {
    * @param memberId
    * @return ;
    */
-  @PostMapping("/room/expert")
+  @PostMapping("/rooms/expert")
   @ResponseBody
   @Operation(summary = "채팅방 생성", description = "expertId, memberId로 채팅방을 생성합니다.채팅방 이름 : (expertId_memberId)")
   public ResponseEntity<ChatRoomDto> startChatRoomWithExpert(@RequestParam long expertId, @RequestParam long memberId) {

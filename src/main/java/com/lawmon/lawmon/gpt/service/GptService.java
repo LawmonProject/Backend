@@ -235,7 +235,7 @@ public class GptService {
 
     String url = contract.getPdfUrl();
     InputStream inputStream = s3Service.downloadFile(url);
-
+///
     File tempFile = File.createTempFile("contract_", ".pdf");
     try (FileOutputStream out = new FileOutputStream(tempFile)) {
         inputStream.transferTo(out);

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/experts")
+@RequestMapping("/api/v1/experts")
 @RequiredArgsConstructor
 public class ExpertController {
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/law")
+@RequestMapping("/api/v1/law")
 @RequiredArgsConstructor
 public class LawSearchController {
 

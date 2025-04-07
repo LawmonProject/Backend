@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/")
+@RequestMapping("/api/v1")
 @Tag(name = "Chat API", description = "채팅 API")
 public class ChatController {
 

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/api/v1/categories")
 @Tag(name = "Category API", description = "카테고리 API")
 public class CategoryController {
 

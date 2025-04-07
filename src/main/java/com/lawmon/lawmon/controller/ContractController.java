@@ -18,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contracts")
+@RequestMapping("/api/v1/contracts")
 @Tag(name = "Contract API", description = "계약서 API")
 public class ContractController {
 
