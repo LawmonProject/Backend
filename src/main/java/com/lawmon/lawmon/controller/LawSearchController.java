@@ -1,12 +1,15 @@
 package com.lawmon.lawmon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawmon.lawmon.dto.law.LawSearchDto;
 import com.lawmon.lawmon.dto.law.LawSearchWrapperDto;
+import com.lawmon.lawmon.dto.law.PrecedentDto;
 import com.lawmon.lawmon.service.LawSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -24,7 +27,18 @@ public class LawSearchController {
             String jsonResponse = responseFuture.join();
 
             LawSearchWrapperDto parsedDto = objectMapper.readValue(jsonResponse, LawSearchWrapperDto.class);
-            return ResponseEntity.ok(parsedDto);
+            LawSearchDto precSearch = parsedDto.getPrecSearch();
+
+            if (precSearch == null || precSearch.getPrec() == null) {
+                return ResponseEntity.ok(List.of());
+            }
+
+            List<PrecedentDto> top3 = precSearch.getPrec()
+                    .stream()
+                    .limit(3)
+                    .toList();
+
+            return ResponseEntity.ok(top3);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body("❌ 판례 검색 중 JSON 파싱 실패: " + e.getMessage());
