@@ -41,3 +41,6 @@ out/
 
 ### init.sql ###
 init.sql
+
+docker-compose.prod.yaml
+src/main/resources/application-prod.yml
