@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
     
     # 1. Java 21 세팅
     - name: Set up JDK 21
