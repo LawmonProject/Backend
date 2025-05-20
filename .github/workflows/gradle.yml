@@ -76,8 +76,8 @@ jobs:
       # 볼륨 생성
       - name: Create Docker volumes if not exist
         run: |
-          docker volume create lawmon-mysql || true
-          docker volume create lawmon-redis || true
+          docker volume create db_mysql || true
+          docker volume create db_redis || true
           
       # Mysql 컨테이너 실행
       - name: mysql run new container
