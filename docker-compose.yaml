@@ -70,10 +70,44 @@ services:
 #      MONGO_INITDB_ROOT_USERNAME: lawmon
 #      MONGO_INITDB_ROOT_PASSWORD: qwer
 #    restart: always
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8081:8080"  # Grafana에서 이 포트를 Prometheus가 스크랩함
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Prometheus 설정 파일
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - app-network
+
 
 volumes:
   db_mysql:
   db_redis:
+  grafana-storage:
 #  db_mongo:
 
 
