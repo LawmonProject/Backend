@@ -1,6 +1,7 @@
 package com.lawmon.lawmon.controller;
 
 import com.lawmon.lawmon.dto.LoginRequestDto;
+import com.lawmon.lawmon.dto.LoginResponseDto;
 import com.lawmon.lawmon.dto.SignupRequestDto;
 import com.lawmon.lawmon.security.JwtUtil;
 import com.lawmon.lawmon.service.UserService;
@@ -22,8 +23,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
-        String token = userService.login(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+        LoginResponseDto response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 }

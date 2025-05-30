@@ -26,7 +26,7 @@ public class ExpertService {
 
     public List<ExpertListDto> getAllExperts() {
         return expertRepository.findAll().stream()
-                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .map(expert -> new ExpertListDto(expert.getId(), expert.getName(), expert.getSpecialty()))
                 .collect(Collectors.toList());
     }
 
@@ -44,13 +44,13 @@ public class ExpertService {
 
     public List<ExpertListDto> getExpertsByCategory(ExpertCategory category) {
         return expertRepository.findByCategory(category).stream()
-                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .map(expert -> new ExpertListDto(expert.getId(), expert.getName(), expert.getSpecialty()))
                 .collect(Collectors.toList());
     }
 
     public List<ExpertListDto> getExpertsBySpecialty(Specialty specialty) {
         return expertRepository.findBySpecialty(specialty).stream()
-                .map(expert -> new ExpertListDto(expert.getName(), expert.getSpecialty()))
+                .map(expert -> new ExpertListDto(expert.getId(), expert.getName(), expert.getSpecialty()))
                 .collect(Collectors.toList());
     }
 
