@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/actuator/**" // ✅ Prometheus용 actuator endpoint 허용
+                                "/actuator/**", // ✅ Prometheus용 actuator endpoint 허용
+                                "/ws-stomp/**" // websocket
                         ).permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
