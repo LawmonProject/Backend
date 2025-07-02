@@ -42,5 +42,5 @@ out/
 ### init.sql ###
 init.sql
 
-docker-compose.prod.yaml
+### 배포 관련 ###
 src/main/resources/application-prod.yml
