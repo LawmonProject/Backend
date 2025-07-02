@@ -2,6 +2,7 @@ package com.lawmon.lawmon.service;
 
 import com.lawmon.lawmon.Entity.*;
 import com.lawmon.lawmon.dto.LoginRequestDto;
+import com.lawmon.lawmon.dto.LoginResponseDto;
 import com.lawmon.lawmon.dto.SignupRequestDto;
 import com.lawmon.lawmon.dto.UserResponseDto;
 import com.lawmon.lawmon.repository.UserRepository;
@@ -58,7 +59,7 @@ public class UserService {
         }
     }
 
-    public String login(LoginRequestDto request) {
+    public LoginResponseDto login(LoginRequestDto request) {
         BaseUser user = userRepository.findByEmail(request.getEmail())
                 .map(BaseUser.class::cast)
                 .orElseGet(() -> expertRepository.findByEmail(request.getEmail())
@@ -69,6 +70,7 @@ public class UserService {
             throw new RuntimeException("비밀번호 불일치");
         }
 
-        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        return new LoginResponseDto(user.getId(), token);
     }
 }
