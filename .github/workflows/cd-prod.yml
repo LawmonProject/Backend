@@ -1,0 +1,49 @@
+name: CD to EC2 - Main (Production)
+
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  run-docker-image-on-ec2:
+    # build-docker-image (위)과정이 완료되어야 실행됩니다.
+    needs: build-docker-image
+    runs-on: self-hosted
+
+    steps:
+
+      # 최신 이미지를 풀받습니다
+      - name: docker pull
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/lawmon-backend
+
+      # 백엔드 앱 컨테이너만 중지 및 삭제
+      - name: docker stop backend container
+        run: | 
+          sudo docker ps -q --filter "name=backend-lawmon" | xargs -r sudo docker stop
+          sudo docker ps -aq --filter "name=backend-lawmon" | xargs -r sudo docker rm -f
+
+      # app-network 가 없으면 생성
+      - name: Ensure Docker Network Exists
+        run: | 
+          sudo docker network inspect app-network >/dev/null 2>&1 || \
+          sudo docker network create app-network
+
+      # database container 실행 -> 최초에만 실행
+      - name: Run database containers
+        run: sudo docker compose -f infra/database/docker-compose.database.yml up -d --build
+
+      # monitoring container 실행 -> 최초에만 실행
+#      - name: Run monitoring containers
+#        run: sudo docker compose -f infra/monitoring/docker-compose.monitoring.yml up -d --build
+
+      # app container 실행
+      - name: Run app containers
+        run: sudo docker compose -f infra/app/docker-compose.app.yml up -d --build
+
+      # 미사용 이미지를 정리합니다
+      - name: delete old docker image
+        run: sudo docker system prune -af
