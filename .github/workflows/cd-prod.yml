@@ -1,6 +1,4 @@
 name: CD to EC2 - Main (Production)
-
-
 on:
   push:
     branches: [ "main" ]
