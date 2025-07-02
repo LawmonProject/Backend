@@ -1,0 +1,16 @@
+# production
+
+services:
+  backend:
+    image: frozzun99/lawmon-backend:latest
+    container_name: backend-lawmon
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
