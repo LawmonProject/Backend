@@ -29,8 +29,8 @@ jobs:
           sudo docker network create app-network
 
       # database container 실행 -> 최초에만 실행
-      - name: Run database containers
-        run: sudo docker compose -f ./infra/database/docker-compose.database.yaml up -d --build
+#      - name: Run database containers
+#        run: sudo docker compose -f ./infra/database/docker-compose.database.yaml up -d --build
 
       # monitoring container 실행 -> 최초에만 실행
 #      - name: Run monitoring containers
