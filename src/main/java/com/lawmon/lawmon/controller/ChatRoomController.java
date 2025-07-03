@@ -117,7 +117,7 @@ public class ChatRoomController {
    * @param expertId 전문가 @ID
    * @return list of [RoomId, Name]
    */
-  @GetMapping("/rooms/{expertId}")
+  @GetMapping("/expert/rooms/{expertId}")
   @ResponseBody
   @Operation(summary = "채팅방 조회(전문가용)", description = "자신이 속한 채팅방을 조회합니다(전문가용).")
   public ResponseEntity<List<ChatRoomDto>> room(@PathVariable long expertId) {
