@@ -7,9 +7,5 @@ ARG JAR_FILE=build/libs/*.jar
 # 3. 위에서 정의한 JAR 파일을 컨테이너의 app.jar로 복사
 COPY ${JAR_FILE} app.jar
 
-COPY src/main/resources/application-prod.yml /app/application-prod.yml
-
 # 4. 컨테이너 시작 시 JAR 파일을 실행하는 명령어
 ENTRYPOINT ["java", "-jar", "/app.jar"]
-
-VOLUME /VOLUME_NAME
